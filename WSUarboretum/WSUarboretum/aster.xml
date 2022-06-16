@@ -1,0 +1,34 @@
+<ArrayOfThemeEntityAbridgedData>
+<ThemeEntityAbridgedData>
+<DefaultImagePath>
+https://w3.winona.edu/Locations/Resources/Sky Blue Aster.jpg
+</DefaultImagePath>
+<DisplayName>Sky Blue Aster</DisplayName>
+<EntityId>174</EntityId>
+<GeoLocation>[{"Lat":"44.046118","Lng":"-91.641965"}]</GeoLocation>
+</ThemeEntityAbridgedData>
+<ThemeEntityAbridgedData>
+<DefaultImagePath>
+https://w3.winona.edu/Locations/Resources/smoothleafaster.jpg
+</DefaultImagePath>
+<DisplayName>Smooth Aster</DisplayName>
+<EntityId>232</EntityId>
+<GeoLocation/>
+</ThemeEntityAbridgedData>
+<ThemeEntityAbridgedData>
+<DefaultImagePath>
+https://w3.winona.edu/Locations/Resources/newenglandaster-butterfly.jpg
+</DefaultImagePath>
+<DisplayName>New England Aster</DisplayName>
+<EntityId>233</EntityId>
+<GeoLocation/>
+</ThemeEntityAbridgedData>
+<ThemeEntityAbridgedData>
+<DefaultImagePath>
+https://w3.winona.edu/Locations/Resources/heathaster.jpg
+</DefaultImagePath>
+<DisplayName>Heath Aster</DisplayName>
+<EntityId>234</EntityId>
+<GeoLocation/>
+</ThemeEntityAbridgedData>
+</ArrayOfThemeEntityAbridgedData>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<HTML>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="arboretumStyling.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <title></title>      
+    </head>
+    
+    <body id="divImage" onload="javascript:loadXML();">
+
+        <header class="header">
+            <nav class="nav">
+    
+                <input type="checkbox" id="mobileMenu">
+
+                <label for="mobileMenu" class="menuButton">
+                  <i class="fas fa-bars"></i>
+                </label>
+
+                <a class="headerLogo" href="#">
+                    <img src="img/treeLogo.jpg" alt="tree logo">
+                </a>
+
+                <ul>
+                  <li><a href="#">Home</a></li>
+                  <li><a class="active" href="object_search_page.html">Trees</a></li>
+                  <li><a href="#">Tree Tours</a></li>
+                  <li><a href="#">Support</a></li>
+                  <li><a href="#">Other Species</a></li>
+                </ul>
+    
+            </nav>
+            <section></section>
+        </header>
+
+        <!-- Search boc for the live search function -->
+        
+        <input type="search" id="searchbox" placeholder="Tree Search, i.e. Red Maple. "> 
+
+        <script>
+            // Add a small delay to the search to avoid overloading
+            let typingTimer;        
+            let typeInterval = 500; // Half a second
+            let searchInput = document.getElementById('searchbox');
+
+            searchInput.addEventListener('keyup', () => {
+                console.log(searchInput.value);
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(liveSearch2, typeInterval);
+                liveSearch2();
+            });
+        </script> 
+
+        <!-- DIV area to append all items from the XML documents -->
+        <div class="container" id="posts">
+
+        </div>
+
+        <div id="spacing"></div> <!-- used to keep footer on the bottom -->
+
+        
+        <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button> 
+        <script>
+            //Get the button:
+            mybutton = document.getElementById("myBtn");
+
+            // When the user scrolls down 20px from the top of the document, show the button
+            window.onscroll = function() {scrollFunction()};
+
+            function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+            }
+
+            // When the user clicks on the button, scroll to the top of the document
+            function topFunction() {
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+            } 
+            
+        </script>
+    </body>
+
+
+
+
+    <!-- Javascript functions -->
+    <script type="text/javascript">
+
+
+
+        function loadXML() {
+
+            // Load the XML documents into the page
+            loadXMLDoc('trees.xml');
+            loadXMLDoc('aster.xml');
+
+
+            // Get the tree XML file for processing
+            function loadXMLDoc(XMLName) {
+                //Code to do XML HTTP request (see slides) goes here
+                var xhttp = new XMLHttpRequest();
+                
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        // Run a function to handle XML data recv’d
+                        var treeArray = storeToArray(this); 
+                        //console.log('tree array loaded');
+                        //console.log(treeArray);
+
+                        var xhttp = new XMLHttpRequest();
+                        
+                        xhttp.onreadystatechange = function() {
+                            if (this.readyState == 4 && this.status == 200) {
+                                // Run a function to handle XML data recv’d
+                                var descriptions = storeToArray(this); 
+                                
+                                // add each tree to the document
+                                for(i = 0; i < treeArray.length; i++){
+                                    let id = treeArray[i][2];
+                                    let descr = '';
+                                    descriptions.forEach(element => {
+                                        if(element[2] == id) {
+                                            descr = element[1];
+                                            //console.log(descr);
+                                        }
+                                    });
+                                    //console.log(descr);
+                                    addItem(id, treeArray[i][1], treeArray[i][0], descr); // Load correct description index
+                                                                                    // adds each tree to the correct area
+                                }
+
+                                //Sort buttons alphabetically
+                                sortButtons();
+
+                            }
+                        };
+                        xhttp.open("GET", XMLName, true);
+                        xhttp.send();
+
+                    }
+                };
+                xhttp.open("GET", XMLName, true);
+                xhttp.send();    
+            }
+
+            // Store a given XML document into an array and return that array
+            function storeToArray(xml) {
+                var txt = "";
+                var x, i, xmlDoc, img;
+                var temp = []
+                var return_array = [];
+
+                xmlDoc = xml.responseXML; //Response returned as XML data
+                x = xmlDoc.getElementsByTagName("ThemeEntityAbridgedData");
+                for (i = 0; i< x.length; i++) {
+                    for(j = 0; j < x[i].childNodes.length; j++) {
+                        if(x[i].childNodes[j] != null) {
+                            temp.push(x[i].childNodes[j].innerHTML);
+                        }
+                    };
+                    return_array.push(temp);
+                    temp = [];
+                }
+                
+                return return_array;
+            }
+    
+        
+            function addItem(identifier, obj_name, img, descr) {
+                var a = 1, b = 2;
+                var div = document.createElement('div');
+                div.setAttribute('class', 'post block bc2');
+                div.id = obj_name;
+                div.innerHTML = `
+                    <button class="accordion" id="names" onclick="close_open()">${obj_name}</button>
+                    <div style="background: blanchedalmond;" class="accordion-content">
+                        <img src="${img}">
+                        <button class="accordion" onclick="close_open()">Details</button>
+                        <div class="accordion-content">
+                            <p>${descr}</p>
+                            <p>description goes here</p>
+                        
+                        </div>
+                    </div>
+                `;
+                document.getElementById('posts').appendChild(div);
+                
+            }
+
+
+            function sortButtons() {
+                const buttonContainer = document.getElementById('posts');
+                const sortedButtons = [... buttonContainer.children].sort((buttonA, buttonB) => {
+                    const name1 = buttonA.innerText.toLowerCase();
+                    const name2 = buttonB.innerText.toLowerCase();
+                    if(name1 === name2){
+                        return 0;
+                    } else if(name1 < name2){
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+                sortedButtons.forEach(button => buttonContainer.append(button));
+            }
+
+
+        }
+
+
+
+        function close_open(){
+            var accordions = document.getElementsByClassName("accordion");
+            for (var i = 0; i < accordions.length; i++) {
+                accordions[i].onclick = function() {
+                    
+                    this.classList.toggle('is-open');
+                    var content = this.nextElementSibling;
+
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null; // close
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + "px"; // open
+                    }
+                }
+            }
+        }
+
+        function liveSearch() {
+        // Locate the card elements
+        let cards = document.getElementsByClassName('accordion')
+        // Locate the search input
+        let search_query = document.getElementById("searchbox").value;
+        // Loop through the cards
+        for (var i = 0; i < cards.length; i++) {
+            // If the text is within the card...
+            console.log(cards[i].innerHTML);
+            console.log(document.getElementById("searchbox"));
+            if(cards[i].innerText.toLowerCase()
+            // ...and the text matches the search query...
+            .includes(search_query.toLowerCase())) {
+                // ...remove the `.is-hidden` class.
+                cards[i].classList.remove("is-hidden");
+            } else {
+                // Otherwise, add the class.
+                cards[i].classList.add("is-hidden");
+            }
+        }
+        }
+        function liveSearch2() {
+            let cards = document.getElementsByClassName('post block bc2');
+            let search_query = document.getElementById("searchbox").value;
+            for (var i = 0; i < cards.length; i++) {
+                if(cards[i].id.toLowerCase().includes(search_query.toLowerCase())) {
+                    cards[i].classList.remove("is-hidden");
+                } else {
+                    cards[i].classList.add("is-hidden");
+                }
+            }
+        }
+
+    </script>
+    <div id="settle">
+        <footer class="footer">
+            <div class="footerLeft">
+                <img src="img/WSU.png" alt="WSU Logo" > 
+                <p>
+                    Winona State University | P.O. Box 5838 | 175 West Mark Street | Winona, MN 55987 | 507.457.5000 | 1.800.342.5978 <br>
+                    <br> Winona State University is an equal opportunity employer and educator. <br>
+                </p> 
+            </div>
+            <div class="footerMN"> 
+                <img src="img/mn.png" alt="minnstate Logo" > 
+                <p>
+                    <br> The oldest member of the colleges and universities of Minnesota State educational system. <br> 
+                </p>
+            </div>
+        </footer>
+    </div>
+</HTML>
